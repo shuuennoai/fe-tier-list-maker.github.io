@@ -26,9 +26,7 @@
 			<hr>
 			<li><button id="hidebuttons">Hide controls</button></li>
 			<hr>
-			<li><button id="characters">Change characters</button></li>
-			<hr>
-			<li><button id="filter">Filter</button></li>
+			<li><button id="characters">Change games</button></li>
 			<hr>
 			<li><button id="help">Help</button></li>
 			<hr>
@@ -37,7 +35,6 @@
 			<li><button id="reset">Reset</button></li>
 		</ul>
 	</nav>
-
 	<div id="controls">
 		<div class="nav-toggle">
 			<div class="nav-toggle-bar"></div>
@@ -47,7 +44,7 @@
 		<div id="buttons">
 			<button id="dock">Dock tier list</button>
 			<button id="hidebuttons">Hide controls</button>
-			<button id="characters">Change characters</button>
+			<button id="characters">Change games</button>
 			<button id="help">Help</button>
 			<button id="save">Save/Load</button>
 			<button id="reset">Reset</button>
@@ -93,10 +90,6 @@
 		</tr>
 	</tbody></table>
 	</div>
-
-	<div id="tooltip">
-		<p>PRO TIP: Click the top left button to show more characters!</p>
-	</div>
 	
 	<div id="char" class="sort">
 		<div>If no characters are loaded here, choose a game by clicking the "Change game" button above.</div>
@@ -124,8 +117,9 @@
 			<div id="helpMenu" class="popupMenu">
 				<h1>HELP</h1>
 				<span id="close"></span>
-				<p>Also check out the <a href ="https://fe-tier-list-maker.github.io/home">other tools</a>, including a game tier list maker and graph maker!</p>
-				<p>For any issues, add it to the list on the repository page or message me on <a href ="https://twitter.com/vernie_dk">Twitter</a> or elsewhere.</p>
+				<p>Also check out the <a href ="https://fe-tier-list-maker.github.io/home">other tools</a>, including a Venn Diagram maker!</p>
+				<p>Source code can be found <a href ="https://github.com/fe-tier-list-maker/fe-tier-list-maker.github.io">here</a> and was forked from <a href ="https://github.com/quetzle/smash-apps">here</a>.</p>
+				<p>Information on image ownership can be found <a href = "https://github.com/fe-tier-list-maker/fe-tier-list-maker.github.io/blob/master/CREDITS.md">here</a>.</p>
 				<p>You can click and drag characters into the list or double-click to instantly move them to the highest tier.</p>
 				<p>Clicking on the "Dock tier list" button will <strong>stick the tier list to the top of the window.</strong>
 				This can be useful if you have a large number of characters on-screen and don't want to scroll up and down
@@ -135,8 +129,7 @@
 				<p>Next to the gear are two arrows which will let you <strong>move a tier up and down a level</strong>.</p>
 				<p><strong>You can change the name of the tier</strong> by clicking on the tier label and typing in there. If this doesn't work, you can change or reset it in the tier's settings menu (the gear).</p>
 				<p>If you want to <strong>completely start over</strong>, refresh the page or click the "Reset" button at the top of the page.</a>
-				<p>Source code can be found <a href ="https://github.com/fe-tier-list-maker/fe-tier-list-maker.github.io">here</a> and was forked from <a href ="https://github.com/quetzle/smash-apps">here</a>.</p>
-				<p>Information on image ownership can be found <a href = "https://github.com/fe-tier-list-maker/fe-tier-list-maker.github.io/blob/master/CREDITS.md">here</a>.</p>
+				<p>For any issues, add it to the list on the repository page or message me on <a href ="https://twitter.com/vernie_dk">Twitter</a> or elsewhere.</p>
 			</div>
 			<div id="screenshotShow" class="popupMenu">
 				<h1>SAVE/LOAD</h1>
@@ -147,21 +140,12 @@
 				<p style="text-align: left;">Note that any game that does not appear in the loaded list will be deselected.</p>
 				<textarea id="exportcode" rows="8"></textarea><div><button id="runCode">Run code</button></div>
 			</div>
-			<div id="filterMenu" class="popupMenu">
-				<h1>FILTER</h1>
-				<span id="close"></span>
-				<div id="filterChecklist"><div></div></div>
-				<p>Choosing any filter will <strong>hide all unselected characters</strong> that don't match the chosen filters. Display every character again by unchecking every filter.</p>
-			</div>
 		</div>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
-	<!--<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>!-->
-	<!--<script src="allnames.js"></script>-->
-	<script src="lib/dragula.min.js"></script>
-	<script src="lib/html2canvas.min.js"></script>
-	<script src="lib/common.js"></script>
-	<script src="lib/tags.js"></script>
+	<script src="../lib/dragula.min.js"></script>
+	<script src="../lib/html2canvas.min.js"></script>
+	<script src="../lib/common.js"></script>
 	<script>
 		dragula({
 			isContainer: function (el) {
@@ -171,10 +155,17 @@
 			localStorage.setItem("TierListMakerCode",toCode());
 		});
 		
+		var gameAll = [	["game", 0, ""],
+                ["all", 21, "Fire Emblem"],
+				["fan", 1, "Fan Games"],
+				["is", 3, "Intelligent Systems"],
+				["atlus", 2, "Atlus"],
+                ["other", 13, "Other"],
+                ];
+
 		var singleTier = "<tr><td class='labelHolder' contenteditable='true' style='background-color:#FFFF7F'><span class='label'>NEW</span></td><td class='tierHolder'><div class='tier sort' id='rows'><div class='hiddenkid'></div></div></td><td class='settingsContainer'><div id='settings'></div><div id='moveButtons'><div id='moveUp'></div><div id='moveDown'></div></div></td></tr>";
 		
 		var screenshotMode = false;
-		var showTooltip = true;
 		var listStickied = false;
 		var colors = ["#FF7F7F","#FFBF7F","#FFDF7F","#FFFF7F","#BFFF7F","#7FFF7F","#7FFFFF","#7FBFFF","#7F7FFF","#FF7FFF","#BF7FBF","#3B3B3A","#858585","#CFCFCF","#F7F7F7"];
 		// first is the row in the table of the tier, second is the index of its color
@@ -187,7 +178,7 @@
 					  [$("tr:nth-of-type(7)"), 9] ];
 		var tier = []; // format: [element, color id]
 		var tierlist = [];
-		var currentTier;
+		var currentTier; // i mean come on!
 		var tempTier;
 		var tierIndex;
 		var currentColor;
@@ -196,13 +187,6 @@
 		for (var i = 0; i < tierDefaults.length; i++) {
 			tierDefaults[i][0].find(".labelHolder").css("background",colors[tierDefaults[i][1]]);
 		}
-
-		$(document).on("click", ".nav-toggle", function() {
-			if (showTooltip) {
-				$("#tooltip").css("display", "none");
-				showTooltip = false;
-			}
-		});
 		
 		$(document).on("click", "#dock", function() {
 			if (listStickied) {
@@ -255,20 +239,16 @@
 			if($(this).is(":checked")) {
 				for (var k = 0; k <= currentGameChars[gameIndex][1]; k++) {
 					$("#char div:last-child").after(singleChar);
-					$("#char div:last-child").css("background-image","url(img/"+currentGame+"/"+gameId+"/"+k+".png)");
+					// read jpg images for compression, game box art isn't transparent
+					$("#char div:last-child").css("background-image","url(img/"+currentGame+"/"+gameId+"/"+k+".jpg)");
 					$("#char div:last-child").attr("id", gameId + "-" + k);
 					// $("#char div:last-child").attr("title", allCharacters[gameIndex][k]);
 				}
 			} else {
-				$(".character[id^='"+currentGameChars[gameIndex][0]+"-']").each( function() {
+				$(".character[id^="+currentGameChars[gameIndex][0]+"]").each( function() {
 					$(this).remove();
 				});
 			}
-			updateFilters(imgTags);
-		});
-
-		$(document).on("change", ".filterCheck", function() {
-			updateFilters(imgTags);
 		});
 		
 		$(document).on("dblclick", ".character", function() { // move to highest tier instantly
@@ -383,9 +363,6 @@
 			$(".selectAllWrap").each( function() {
 				$(this).remove();
 			});
-			$(".filterCheck").each( function() {
-				$(this).prop('checked', false).change();
-			});
 			
 			for (var i = 1; i < game.length; i++) {
 				/*
@@ -399,14 +376,10 @@
 				$("#checklist div:last-child").after(singleCheckWrap);
 				$("#checklist div:last-child").html(game[i][2]+": <input type='checkbox' class='characterCheck "+"game"+i+"' id='"+game[i][0]+"' >");
 			}
-			if ((game.length - 1) % 2 != 0) {
-				$("#checklist div:last-child").after(singleCheckWrap);
-			}
 			$("#checklist div:last-child").after(selectAllWrap);
 			$("#checklist div:last-child").html("Select All: <input type='checkbox' class='selectAll' id='all' >");
 			
-			// 31 means Three Houses
-			$( ".characterCheck.game31" ).prop('checked', true).change();
+			$( ".selectAll" ).prop('checked', true).change();
 
 			$("h1 span").text(currentGame);
 			updateTiers();
@@ -455,14 +428,8 @@
 			$("tr").each( function() {
 				$(this).remove();
 			});
-			console.log(processedCode);
-			/*
-			// deprecated switch statement
-			switch(processedCode[0][0]) {
-				case "fe": changeGame(gameFe);break;
-			}
-			*/
-			changeGame(gameFe);
+			console.log(processedCode)
+			changeGame(gameAll);
 			// select only the games that appear
 			$(".selectAll").prop('checked', false).change();
 			selectionList = [];
@@ -516,13 +483,12 @@
 		$(document).ready( function() {
 			$("#char").html("<div></div>");
 			if (localStorage.getItem("ColorTiersCode") === null)
-				changeGame(gameFe);
+				changeGame(gameAll);
 			else {
 				$("#exportcode").val(localStorage.getItem("ColorTiersCode"));
 				loadCode(localStorage.getItem("ColorTiersCode"));
 			}
 			updateTiers();
-			loadFilterList(allTags);
 			tierlistSize();
 		});
 		$(window).resize( function () {
